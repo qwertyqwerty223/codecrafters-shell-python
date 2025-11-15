@@ -1,5 +1,5 @@
 import sys
-import json
+import os
 
 def invalid_cmd(cmd):
     error_msg = f"{cmd}: command not found"
@@ -22,7 +22,14 @@ def cmd_type(*args):
     if args[0] in cmd_dict:
         print(f"{args[0]} is a shell builtin")
     else:
-        error_msg = f"{" ".join(args)}: not found"
+        get_path = os.environ.get("PATH")
+        path_list = get_path.split(os.pathsep)
+        for path in path_list:
+            file_path = os.path.join(path, args[0])
+            if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
+                print(f"{args[0]} is {file_path}")
+                return
+        error_msg = f"{args[0]}: not found"
         print(error_msg)
 
 
