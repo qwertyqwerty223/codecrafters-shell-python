@@ -1,4 +1,5 @@
 import sys
+import json
 
 def invalid_cmd(cmd):
     error_msg = f"{cmd}: command not found"
@@ -17,9 +18,19 @@ def cmd_echo(*args):
     print(*args)
 
 
+def cmd_type(*args):
+    if args[0] in cmd_dict:
+        print(f"{args[0]} is a shell builtin")
+    else:
+        invalid_cmd(" ".join(args))
+    pass
+
+
+global cmd_dict
 cmd_dict = {
     "exit": cmd_exit,
-    "echo": cmd_echo
+    "echo": cmd_echo,
+    "type": cmd_type
 }
 
 
