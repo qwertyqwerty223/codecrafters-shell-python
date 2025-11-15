@@ -17,20 +17,33 @@ def cmd_exit(status_code='0'):
 def cmd_echo(*args):
     print(*args)
 
-
+def file_on_path(filename):
+    get_path = os.environ.get("PATH")
+    path_list = get_path.split(os.pathsep)
+    for path in path_list:
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
+            return file_path
+        
 def cmd_type(*args):
     if args[0] in cmd_dict:
         print(f"{args[0]} is a shell builtin")
     else:
-        get_path = os.environ.get("PATH")
-        path_list = get_path.split(os.pathsep)
-        for path in path_list:
-            file_path = os.path.join(path, args[0])
-            if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
-                print(f"{args[0]} is {file_path}")
-                return
-        error_msg = f"{args[0]}: not found"
-        print(error_msg)
+        file_path = file_on_path(args[0])
+        if file_path:
+            print(f"{args[0]} is {file_path}")
+        else:
+            error_msg = f"{args[0]}: not found"
+            print(error_msg)
+
+def execute_external(cmd):
+    file_path = file_on_path(cmd[0])
+    if file_path:
+        os.system(" ".join(cmd))
+    else:
+        invalid_cmd(cmd[0])
+
+    pass
 
 
 global cmd_dict
@@ -57,7 +70,7 @@ def main():
                     cmd_dict[cmd[0]]()
             else:
             # to handle rest of the commands (for now)
-                invalid_cmd(user_input)
+                execute_external(cmd)
         
 
 
