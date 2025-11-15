@@ -22,8 +22,8 @@ def cmd_type(*args):
     if args[0] in cmd_dict:
         print(f"{args[0]} is a shell builtin")
     else:
-        invalid_cmd(" ".join(args))
-    pass
+        error_msg = f"{" ".join(args)}: not found"
+        print(error_msg)
 
 
 global cmd_dict
